@@ -1,0 +1,24 @@
+template_path: templates/lambda_function.py
+parameters:
+  Handler: "index.handler"
+  FunctionName: "lambda-in-vpc-test-function"
+  Description: "Lambda function example running inside a VPC"
+  # The role specified must be one in which the principal is Lambda. Without this,
+  # the stack will fail to launch
+  Role: !stack_output lambda-function-in-vpc-iam-role::LambdaInVpcRoleArn
+  Runtime: "python2.7"
+  PermissionAction: "lambda:InvokeFunction"
+  PermissionPrincipal: logs.us-east-1.amazonaws.com
+  SubnetIds:
+    - !stack_output subnets::PrivateSubnet1
+    - !stack_output subnets::PrivateSubnet2
+  SecurityGroupIds:
+    - !stack_output security-groups::ExampleSGId
+    - !stack_output security-groups::OtherSGId
+sceptre_user_data:
+  FunctionProperties:
+    Timeout: "30"
+    Environment:
+      EXAMPLE_VARIABLE: "Example"
+    CodeFilepath: data/lambda-code/hello_world.py
+    InVpc: true
