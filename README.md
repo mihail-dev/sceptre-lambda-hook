@@ -1,0 +1,1 @@
+# sceptre-lambda-hook
